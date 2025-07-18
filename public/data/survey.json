@@ -1,0 +1,104 @@
+{
+  "surveys": [
+    {
+      "id": "survey_1",
+      "title": "Consumer Shopping Habits",
+      "reward": 45,
+      "duration": "8 minutes",
+      "category": "Shopping",
+      "difficulty": "Easy",
+      "status": "available",
+      "description": "Share your shopping preferences and habits",
+      "requiredPlan": "Starter"
+    },
+    {
+      "id": "survey_2",
+      "title": "Technology Usage Survey",
+      "reward": 75,
+      "duration": "12 minutes", 
+      "category": "Technology",
+      "difficulty": "Medium",
+      "status": "available",
+      "description": "Tell us about your technology usage patterns",
+      "requiredPlan": "Starter"
+    },
+    {
+      "id": "survey_3",
+      "title": "Food Preferences Study",
+      "reward": 50,
+      "duration": "5 minutes",
+      "category": "Food & Drinks",
+      "difficulty": "Easy",
+      "status": "available",
+      "description": "Help us understand food preferences in your region",
+      "requiredPlan": "Starter"
+    },
+    {
+      "id": "survey_4",
+      "title": "Mobile Banking Experience",
+      "reward": 85,
+      "duration": "15 minutes",
+      "category": "Finance",
+      "difficulty": "Medium",
+      "status": "available",
+      "description": "Share your mobile banking experience and preferences",
+      "requiredPlan": "Silver"
+    },
+    {
+      "id": "survey_5",
+      "title": "Entertainment & Media Consumption",
+      "reward": 95,
+      "duration": "18 minutes",
+      "category": "Entertainment",
+      "difficulty": "Medium",
+      "status": "available",
+      "description": "Tell us about your entertainment preferences",
+      "requiredPlan": "Silver"
+    },
+    {
+      "id": "survey_6",
+      "title": "Healthcare & Wellness Survey",
+      "reward": 100,
+      "duration": "20 minutes",
+      "category": "Healthcare",
+      "difficulty": "Hard",
+      "status": "available",
+      "description": "Share insights about healthcare and wellness habits",
+      "requiredPlan": "Gold"
+    },
+    {
+      "id": "survey_7",
+      "title": "Investment & Savings Behavior",
+      "reward": 120,
+      "duration": "25 minutes",
+      "category": "Finance",
+      "difficulty": "Hard",
+      "status": "available",
+      "description": "Help us understand investment and savings patterns",
+      "requiredPlan": "Gold"
+    },
+    {
+      "id": "survey_8",
+      "title": "Business & Entrepreneurship",
+      "reward": 150,
+      "duration": "30 minutes",
+      "category": "Business",
+      "difficulty": "Hard",
+      "status": "available",
+      "description": "Share your business experience and entrepreneurial insights",
+      "requiredPlan": "Platinum"
+    }
+  ],
+  "userProgress": {
+    "currentPlan": "Starter",
+    "surveysCompletedToday": 0,
+    "totalEarnings": 0,
+    "pendingEarnings": 0,
+    "completedSurveys": [],
+    "referrals": {
+      "totalReferrals": 0,
+      "referralEarnings": 0,
+      "referralCode": "REF_USER123"
+    }
+  }
+}

@@ -13,84 +13,93 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { useToast } from "@/hooks/use-toast";
 import Sidebar from "./Sidebar";
+import { useSurveyData } from "@/hooks/useSurveyData";
 
 const Dashboard = () => {
+  const { toast } = useToast();
+  const { planData, surveyData, loading, getCurrentPlan, getAvailableSurveys, completeSurvey } = useSurveyData();
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen w-full bg-background">
+        <Sidebar />
+        <main className="flex-1 p-6 lg:p-8">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+              <p className="text-muted-foreground">Loading dashboard...</p>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (!planData || !surveyData) return null;
+
+  const currentPlan = getCurrentPlan();
+  const availableSurveys = getAvailableSurveys();
+  const userProgress = surveyData.userProgress;
+
   const stats = [
     {
       title: "Total Earnings",
-      value: "KSh 4,250",
-      change: "+12%",
+      value: `KSh ${userProgress.totalEarnings.toLocaleString()}`,
+      change: `+KSh ${userProgress.pendingEarnings}`,
       icon: DollarSign,
       color: "text-success"
     },
     {
       title: "Surveys Completed",
-      value: "47",
-      change: "+8",
+      value: userProgress.completedSurveys.length.toString(),
+      change: `${userProgress.surveysCompletedToday} today`,
       icon: FileText,
       color: "text-primary"
     },
     {
-      title: "Success Rate",
-      value: "89%",
-      change: "+5%",
+      title: "Current Plan",
+      value: currentPlan?.planName || "No Plan",
+      change: `${currentPlan?.dailySurvey || 0} daily limit`,
       icon: TrendingUp,
       color: "text-accent"
     },
     {
-      title: "Next Payout",
-      value: "3 days",
-      change: "KSh 1,200",
-      icon: Clock,
+      title: "Referrals",
+      value: userProgress.referrals.totalReferrals.toString(),
+      change: `KSh ${userProgress.referrals.referralEarnings}`,
+      icon: Users,
       color: "text-warning"
     }
   ];
 
-  const availableSurveys = [
-    {
-      title: "Consumer Shopping Habits",
-      reward: "KSh 120",
-      duration: "8 minutes",
-      category: "Shopping",
-      difficulty: "Easy"
-    },
-    {
-      title: "Technology Usage Survey",
-      reward: "KSh 200",
-      duration: "12 minutes", 
-      category: "Technology",
-      difficulty: "Medium"
-    },
-    {
-      title: "Food Preferences Study",
-      reward: "KSh 90",
-      duration: "5 minutes",
-      category: "Food & Drinks",
-      difficulty: "Easy"
+  const handleStartSurvey = (surveyId: string) => {
+    if (!currentPlan) {
+      toast({
+        title: "No Plan Selected",
+        description: "Please upgrade your plan to access surveys.",
+        variant: "destructive"
+      });
+      return;
     }
-  ];
 
-  const recentActivity = [
-    {
-      survey: "Brand Awareness Survey",
-      amount: "KSh 150",
-      status: "Completed",
-      time: "2 hours ago"
-    },
-    {
-      survey: "Mobile App Usage",
-      amount: "KSh 100",
-      status: "Completed", 
-      time: "5 hours ago"
-    },
-    {
-      survey: "Market Research Survey",
-      amount: "KSh 250",
-      status: "Pending Review",
-      time: "1 day ago"
+    if (userProgress.surveysCompletedToday >= currentPlan.dailySurvey) {
+      toast({
+        title: "Daily Limit Reached",
+        description: `You've completed your daily limit of ${currentPlan.dailySurvey} surveys.`,
+        variant: "destructive"
+      });
+      return;
     }
-  ];
+
+    // Simulate survey completion
+    completeSurvey(surveyId);
+    toast({
+      title: "Survey Completed!",
+      description: "Congratulations! Your earnings have been updated.",
+    });
+  };
 
   return (
     <div className="flex min-h-screen w-full bg-background">
@@ -141,24 +150,33 @@ const Dashboard = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                {availableSurveys.map((survey, index) => (
-                  <div key={index} className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors">
+                {availableSurveys.map((survey) => (
+                  <div key={survey.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors">
                     <div className="flex-1">
                       <h4 className="font-semibold">{survey.title}</h4>
-                      <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
+                      <p className="text-sm text-muted-foreground mb-2">{survey.description}</p>
+                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
                         <span>⏱️ {survey.duration}</span>
                         <Badge variant="secondary">{survey.category}</Badge>
                         <Badge variant={survey.difficulty === "Easy" ? "default" : "secondary"}>
                           {survey.difficulty}
                         </Badge>
+                        <Badge variant="outline">
+                          Requires {survey.requiredPlan}
+                        </Badge>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="text-right">
-                        <div className="font-bold text-primary">{survey.reward}</div>
+                        <div className="font-bold text-primary">KSh {survey.reward}</div>
                       </div>
-                      <Button size="sm" className="bg-gradient-primary hover:opacity-90">
-                        Start Survey
+                      <Button 
+                        size="sm" 
+                        className="bg-gradient-primary hover:opacity-90"
+                        onClick={() => handleStartSurvey(survey.id)}
+                        disabled={userProgress.surveysCompletedToday >= (currentPlan?.dailySurvey || 0)}
+                      >
+                        {userProgress.surveysCompletedToday >= (currentPlan?.dailySurvey || 0) ? 'Limit Reached' : 'Start Survey'}
                       </Button>
                     </div>
                   </div>
@@ -180,41 +198,61 @@ const Dashboard = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                {recentActivity.map((activity, index) => (
-                  <div key={index} className="flex flex-col space-y-2">
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <p className="font-medium text-sm">{activity.survey}</p>
-                        <p className="text-xs text-muted-foreground">{activity.time}</p>
+                {userProgress.completedSurveys.length === 0 ? (
+                  <p className="text-muted-foreground text-center py-4">No surveys completed yet</p>
+                ) : (
+                  userProgress.completedSurveys.slice(-3).map((surveyId, index) => {
+                    const survey = surveyData.surveys.find(s => s.id === surveyId);
+                    if (!survey) return null;
+                    
+                    return (
+                      <div key={surveyId} className="flex flex-col space-y-2">
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <p className="font-medium text-sm">{survey.title}</p>
+                            <p className="text-xs text-muted-foreground">Recently completed</p>
+                          </div>
+                          <Badge variant="default" className="text-xs">
+                            Completed
+                          </Badge>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm font-semibold text-success">KSh {survey.reward}</span>
+                        </div>
+                        {index < userProgress.completedSurveys.slice(-3).length - 1 && <hr className="border-border" />}
                       </div>
-                      <Badge variant={activity.status === "Completed" ? "default" : "secondary"} className="text-xs">
-                        {activity.status}
-                      </Badge>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm font-semibold text-success">{activity.amount}</span>
-                    </div>
-                    {index < recentActivity.length - 1 && <hr className="border-border" />}
-                  </div>
-                ))}
+                    );
+                  })
+                )}
               </CardContent>
             </Card>
 
             {/* Progress to next payout */}
             <Card className="shadow-soft mt-6">
               <CardHeader>
-                <CardTitle className="text-sm">Next Payout Progress</CardTitle>
+                <CardTitle className="text-sm">Withdrawal Progress</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span>KSh 1,200 / KSh 1,500</span>
-                    <span>80%</span>
+                    <span>KSh {userProgress.pendingEarnings} / KSh {currentPlan?.minimumWithdrawal || 0}</span>
+                    <span>{Math.round(((userProgress.pendingEarnings / (currentPlan?.minimumWithdrawal || 1)) * 100))}%</span>
                   </div>
-                  <Progress value={80} className="h-2" />
+                  <Progress value={Math.min(((userProgress.pendingEarnings / (currentPlan?.minimumWithdrawal || 1)) * 100), 100)} className="h-2" />
                   <p className="text-xs text-muted-foreground">
-                    Complete 2 more surveys to reach minimum payout
+                    {userProgress.pendingEarnings >= (currentPlan?.minimumWithdrawal || 0) 
+                      ? "Ready for withdrawal!" 
+                      : `KSh ${(currentPlan?.minimumWithdrawal || 0) - userProgress.pendingEarnings} more needed`}
                   </p>
+                  <div className="mt-4">
+                    <p className="text-xs text-muted-foreground mb-1">Your referral code:</p>
+                    <div className="flex items-center gap-2">
+                      <code className="bg-muted px-2 py-1 rounded text-sm">{userProgress.referrals.referralCode}</code>
+                      <Button size="sm" variant="outline" className="text-xs">
+                        Copy
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
