@@ -22,29 +22,39 @@ const Sidebar = () => {
       title: "Dashboard",
       icon: LayoutDashboard,
       href: "/dashboard",
-      active: true
+      active: window.location.pathname === "/dashboard"
+    },
+    {
+      title: "Plans",
+      icon: Star,
+      href: "/plans",
+      active: window.location.pathname === "/plans"
     },
     {
       title: "Available Surveys",
       icon: FileText,
       href: "/surveys",
-      badge: "12"
+      badge: "12",
+      active: window.location.pathname === "/surveys"
     },
     {
       title: "My Earnings",
       icon: DollarSign,
-      href: "/earnings"
+      href: "/earnings",
+      active: window.location.pathname === "/earnings"
     },
     {
       title: "Referrals",
       icon: Users,
       href: "/referrals",
-      badge: "3"
+      badge: "3",
+      active: window.location.pathname === "/referrals"
     },
     {
       title: "Settings",
       icon: Settings,
-      href: "/settings"
+      href: "/settings",
+      active: window.location.pathname === "/settings"
     }
   ];
 
@@ -110,6 +120,7 @@ const Sidebar = () => {
                   item.active && "bg-gradient-primary text-white shadow-soft",
                   isCollapsed && "justify-center px-0"
                 )}
+                onClick={() => window.location.href = item.href}
               >
                 <item.icon className="h-4 w-4" />
                 {!isCollapsed && (
