@@ -3,10 +3,12 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 const SurveysPage = () => {
   const { surveyData, getCurrentPlan, getAvailableSurveys, completeSurvey } = useSurveyData();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   if (!surveyData) return null;
 
@@ -21,33 +23,21 @@ const SurveysPage = () => {
         description: "Please upgrade your plan to access surveys.",
         variant: "destructive"
       });
+      navigate("/plans");
       return;
     }
 
     if (userProgress.surveysCompletedToday >= currentPlan.dailySurvey) {
       toast({
         title: "Daily Limit Reached",
-        description: `You've completed your daily limit of ${currentPlan.dailySurvey} surveys.`,
+        description: `You've completed your daily limit of ${currentPlan.dailySurvey} surveys. Please upgrade your plan to continue.`,
         variant: "destructive"
       });
+      navigate("/plans");
       return;
     }
 
-    // Simulate survey completion with random time
-    const timeToComplete = Math.floor(Math.random() * 3000) + 2000; // 2-5 seconds
-    
-    toast({
-      title: "Survey Started",
-      description: "Survey is now loading...",
-    });
-
-    setTimeout(() => {
-      completeSurvey(surveyId);
-      toast({
-        title: "Survey Completed! 🎉",
-        description: `You earned KSh ${surveyData.surveys.find(s => s.id === surveyId)?.reward}! Keep it up!`,
-      });
-    }, timeToComplete);
+    navigate(`/survey/${surveyId}`);
   };
 
   return (
@@ -85,7 +75,7 @@ const SurveysPage = () => {
                   onClick={() => handleStartSurvey(survey.id)}
                   disabled={userProgress.surveysCompletedToday >= (currentPlan?.dailySurvey || 0)}
                 >
-                  {userProgress.surveysCompletedToday >= (currentPlan?.dailySurvey || 0) ? 'Limit Reached' : 'Start Survey'}
+                  {userProgress.surveysCompletedToday >= (currentPlan?.dailySurvey || 0) ? 'Limit Reached - Upgrade Plan' : 'Start Survey'}
                 </Button>
               </div>
             </CardContent>

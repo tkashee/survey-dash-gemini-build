@@ -147,6 +147,10 @@ const Sidebar = () => {
             "w-full justify-start gap-3 text-muted-foreground hover:text-foreground",
             isCollapsed && "justify-center px-0"
           )}
+          onClick={() => {
+            localStorage.clear();
+            window.location.href = "/login";
+          }}
         >
           <LogOut className="h-4 w-4" />
           {!isCollapsed && <span>Logout</span>}

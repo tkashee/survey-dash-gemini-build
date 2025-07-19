@@ -1,15 +1,22 @@
 {
   "surveys": [
     {
-      "id": "survey_1",
-      "title": "Consumer Shopping Habits",
-      "reward": 45,
-      "duration": "8 minutes",
-      "category": "Shopping",
-      "difficulty": "Easy",
-      "status": "available",
-      "description": "Share your shopping preferences and habits",
-      "requiredPlan": "Starter"
+      "surveyId": "1",
+      "surveyCategory": "Consumer Shopping Habits",
+      "surveyPaid": false,
+      "surveyAmount": 45,
+      "surveyQuestions": [
+        {
+          "surveyQuestion": "How often do you shop online?",
+          "surveyType": 1,
+          "surveyAnswers": ["Daily", "Weekly", "Monthly", "Rarely"]
+        },
+        {
+          "surveyQuestion": "What is your preferred shopping category?",
+          "surveyType": 1,
+          "surveyAnswers": ["Electronics", "Clothing", "Groceries", "Books"]
+        }
+      ]
     },
     {
       "id": "survey_2",

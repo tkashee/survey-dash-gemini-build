@@ -49,10 +49,10 @@ const Index = () => {
               </span>
             </div>
             <div className="flex items-center gap-4">
-              <Link to="/dashboard">
+              <Link to="/login">
                 <Button variant="outline">Login</Button>
               </Link>
-              <Link to="/dashboard">
+              <Link to="/signup">
                 <Button className="bg-gradient-primary hover:opacity-90">Sign Up</Button>
               </Link>
             </div>
@@ -151,14 +151,14 @@ const Index = () => {
               </CardHeader>
               <CardContent>
                 <CardDescription>
-                  Cash out your earnings through M-Pesa, PayPal, or bank transfer when you reach the threshold.
+                  Cash out your earnings through M-Pesa or bank transfer when you reach the threshold.
                 </CardDescription>
               </CardContent>
             </Card>
           </div>
 
           <div className="text-center mt-12">
-            <Link to="/dashboard">
+            <Link to="/signup">
               <Button size="lg" className="bg-gradient-primary hover:opacity-90">
                 Start Earning Now
               </Button>
@@ -218,3 +218,11 @@ const Index = () => {
 };
 
 export default Index;
+
+
+
+
+
+
+
+
